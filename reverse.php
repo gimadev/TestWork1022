@@ -17,7 +17,11 @@ function reverse($a)
 {
 
     static $main = null;
-    static $i = 0;
+    static $first = null;
+
+    if (is_null($first)) {
+        $first = $a;
+    }
 
     // Если ссылка на след объект отстутвует, достигли конца односвязного списка, 
     // возвращяем текущий объект, он и становится первым объектом списка
@@ -26,15 +30,11 @@ function reverse($a)
         return $a;
     }
 
-    $i++;
-
     $obj = reverse($a->next);
-
-    $i--;
 
     $obj->next = $a;
 
-    if ($i == 0) {
+    if ($first === $obj->next) {
         return $main;
     }
 
