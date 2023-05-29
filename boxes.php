@@ -22,29 +22,45 @@ class Worker
     public function getResult(array $boxes, int $weight): int
     {
 
-        if(empty($boxes)) {
-            return 0;
+        $balance = [];
+        $res = 0;
+
+        foreach ($boxes as $box) {
+            if ($box >= $weight) {
+                continue;
+            }
+
+            if (isset($balance[$box])) {
+                $balance[$box]++;
+            } else {
+                $balance[$box] = 1;
+            }
         }
 
-        $max = max($boxes);
-        $pos = array_search($max, $boxes);
-        unset($boxes[$pos]);
+        foreach ($balance as $k => $v) {
+            if (empty($balance[$k])) {
+                continue;
+            }
 
-        if($max >= $weight) {
-            return $this->getResult($boxes, $weight);
+            $needle = $weight - $k;
+
+            if (!empty($balance[$needle])) {
+
+                if ($needle == $k) {
+                    if ($balance[$needle] == 1) {
+                        continue;
+                    }
+
+                    $res += intdiv($balance[$needle], 2);
+                } else {
+                    $needle_length = $balance[$needle];
+                    $length = $needle_length <= $v ? $needle_length : $v;
+                    $res += $length;
+                    $balance[$needle] = 0;
+                }
+            }
         }
 
-        $needle = $weight - $max;
-        $pos2 = array_search($needle, $boxes);
-
-        if($pos2 === false) {
-            return $this->getResult($boxes, $weight);
-        }
-
-        unset($boxes[$pos2]);
-
-        return 1 + $this->getResult($boxes, $weight);
-
-
+        return $res;
     }
 }
