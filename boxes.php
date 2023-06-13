@@ -30,34 +30,17 @@ class Worker
                 continue;
             }
 
-            if (isset($balance[$box])) {
-                $balance[$box]++;
-            } else {
-                $balance[$box] = 1;
-            }
-        }
+            $needle = $weight - $box;
 
-        foreach ($balance as $k => $v) {
-            if (empty($balance[$k])) {
-                continue;
-            }
-
-            $needle = $weight - $k;
-
-            if (!empty($balance[$needle])) {
-
-                if ($needle == $k) {
-                    if ($balance[$needle] == 1) {
-                        continue;
-                    }
-
-                    $res += intdiv($balance[$needle], 2);
+            if (empty($balance[$needle])) {
+                if (empty($balance[$box])) {
+                    $balance[$box] = 1;
                 } else {
-                    $needle_length = $balance[$needle];
-                    $length = $needle_length <= $v ? $needle_length : $v;
-                    $res += $length;
-                    $balance[$needle] = 0;
+                    $balance[$box]++;
                 }
+            } else {
+                $res++;
+                $balance[$needle]--;
             }
         }
 
